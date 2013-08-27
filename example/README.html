@@ -26,9 +26,9 @@
     </style>
     
     <!-- guiders.js requires jQuery as a prerequisite. Be sure to load guiders.js AFTER jQuery. -->
-    <script type="text/javascript" src="jquery.min.js"></script>
-    <script type="text/javascript" src="guiders.js"></script>
-    <link rel="stylesheet" href="guiders.css" type="text/css" />
+    <script type="text/javascript" src="assets/js/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../guiders.js"></script>
+    <link rel="stylesheet" href="../guiders.css" type="text/css" />
   </head>
   <body>
     <br />
@@ -47,7 +47,7 @@
     <br />
     <div id="clock" onclick="guiders.next();">
       <br />
-      <img src="clock.gif" width=150 height=150 />
+      <img src="assets/images/clock.gif" width="150" height="150" />
     </div>
     <br />
     <br />
@@ -150,7 +150,7 @@
     
     guiders.createGuider({
       buttons: [{name: "Next"}],
-      description: "Guiders can also be used to introduce of brand new features to existing users. Here is an example of a guider in Gmail. Google's CSS calls this a promo, likely short for promotional box. <br/><br/> <img src=\"promo_gmail.png\" style=\"border: 1px solid #333;\" />",
+      description: "Guiders can also be used to introduce of brand new features to existing users. Here is an example of a guider in Gmail. Google's CSS calls this a promo, likely short for promotional box. <br/><br/> <img src=\"assets/images/promo_gmail.png\" style=\"border: 1px solid #333;\" />",
       id: "guider5",
       next: "guider6",
       overlay: true,
