@@ -19,7 +19,6 @@ var guiders = (function($) {
   var guiders = $.guiders = {};
   
   guiders.version = "2.0.0";
-
   guiders._defaultSettings = {
     attachTo: null, // Selector of the element to attach to.
     autoFocus: false, // Determines whether or not the browser scrolls to the element.
@@ -38,19 +37,20 @@ var guiders = (function($) {
     onClose: null, 
     onHide: null,
     onShow: null,
-    overlay: false,
+    overlay: true,
     position: 0, // 1-12 follows an analog clock, 0 means centered.
     shouldSkip: function() {}, // Optional handler allows you to skip a guider if returns true.
     title: "Sample title goes here",
     width: 400,
-    xButton: false // This places a closer "x" button in the top right of the guider.
+    xButton: true, // This places a closer "x" button in the top right of the guider.
+    xButtonTemplate: '<a class="guiders_close_link" role="button" href="#"></a>'
   };
-
+  guiders._starterButtonTitle = "Help";
   guiders._htmlSkeleton = [
     "<div class='guider'>",
     "  <div class='guiders_content'>",
-    "    <h1 class='guiders_title'></h1>",
     "    <div class='guiders_close'></div>",
+    "    <h1 class='guiders_title'></h1>",
     "    <p class='guiders_description'></p>",
     "    <div class='guiders_buttons_container'>",
     "    </div>",
@@ -59,8 +59,7 @@ var guiders = (function($) {
     "  </div>",
     "</div>"
   ].join("");
-
-  guiders._arrowSize = 42; // This is the arrow's width and height.
+  guiders._arrowSize = 24; // This is the arrow's width and height.
   guiders._backButtonTitle = "Back";
   guiders._buttonAttributes = {"href": "javascript:void(0);"};
   guiders._buttonClassName = "btn btn-small"; // Override this if you use a different class name for your buttons.
@@ -153,12 +152,10 @@ var guiders = (function($) {
 
   guiders._addXButton = function(myGuider) {
     var xButtonContainer = myGuider.elem.find(".guiders_close");
-    var xButton = $("<div></div>", {
-      "class" : "guiders_x_button",
-      "role" : "button"
-    });
+    var xButton = $(myGuider.xButtonTemplate);
     xButtonContainer.append(xButton);
-    xButton.click(function() {
+    xButton.click(function(event) {
+      event.preventDefault();
       guiders.hideAll();
       if (myGuider.onClose) {
         myGuider.onClose(myGuider, true);
@@ -291,9 +288,8 @@ var guiders = (function($) {
 
   guiders._styleArrow = function(myGuider) {
     var position = myGuider.position || 0;
-    if (!position) {
-      return;
-    }
+    if (!position) return;
+
     var myGuiderArrow = $(myGuider.elem.find(".guiders_arrow"));
     var newClass = {
       1: "guiders_arrow_down",
@@ -309,6 +305,7 @@ var guiders = (function($) {
       11: "guiders_arrow_down",
       12: "guiders_arrow_down"
     };
+
     myGuiderArrow.addClass(newClass[position]);
   
     var myHeight = myGuider.elem.innerHeight();
@@ -328,8 +325,8 @@ var guiders = (function($) {
       11: ["left", arrowOffset],
       12: ["left", myWidth/2 - arrowOffset]
     };
-    var position = positionMap[myGuider.position];
-    myGuiderArrow.css(position[0], position[1] + "px");
+
+    myGuiderArrow.css(positionMap[myGuider.position][0], positionMap[myGuider.position][1] + "px");
   };
 
   /**
@@ -368,6 +365,7 @@ var guiders = (function($) {
       }, 20);
     });
   };
+
   guiders._updatePositionOnResize();
 
   guiders._unwireEscape = function (myGuider) {
@@ -521,7 +519,7 @@ var guiders = (function($) {
     }
   };
   
-  guiders.prev = function () {
+  guiders.prev = function() {
     var currentGuider = guiders._guiders[guiders._currentGuiderID];
     if (typeof currentGuider === "undefined") {
       // not what we think it is
@@ -580,7 +578,7 @@ var guiders = (function($) {
       guiders._showOverlay(myGuider);
       // if guider is attached to an element, make sure it's visible
       if (myGuider.highlight && myGuider.attachTo) {
-        guiders._highlightElement(myGuider.attachTo);
+        guiders._highlightElement(myGuider.highlight);
       }
     }
     
@@ -617,7 +615,21 @@ var guiders = (function($) {
 
     return guiders;
   };
-  
+
+  guiders.createStartButton = function(options) {
+      var defaultOptions = {
+          title: 'Help'
+      };
+      options = $.extend({}, defaultOptions, options);
+
+      var button = $('<div id="guiders_starter" role="button"><span>'+options.title+'</span></div>');
+      button.click(function() {
+
+          guiders.show('welcome');
+      });
+      $('body').append(button);
+  };
+
   // Allow separate method of instantiating guiders, with $("#guider2").guider()
   // You can pass parameters to the guiders with either data-attributes on the element,
   // or as optional parameters in the options hash: $("#guider").guider(options)
